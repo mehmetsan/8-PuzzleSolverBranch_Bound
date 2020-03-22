@@ -231,6 +231,7 @@ def solve(r, goalState):
 index = 0
 
 for each in generatedPuzzles:
+    print()
     print("Puzzle No",index)
     testInput = [[calculateMisplaced(each), each]]
     solutionSteps = solve( testInput, goalState )
