@@ -7,11 +7,14 @@ Created on Sat Mar 21 17:25:42 2020
 import numpy as np
 import generate
 
-currentState = np.array([[1,2,3],[4,5,6],[7,8,-1]])
+t1 = np.array([[1,2,3],[4,5,6],[7,8,-1]])
+t2 = np.array([[1,2,3],[4,5,-1],[7,8,6]])
+
+initialState = np.array([[1,2,3],[4,5,6],[7,8,-1]])
 goalState = np.array([[1,2,3],[4,5,6],[7,8,-1]])
 
 generatedPuzzles = []   #LIST TO STORE THE GENERATED PUZZLES
-generate.generatePuzzle(generatedPuzzles,currentState)    #GENERATE THE PUZZLES AND STORE THEM
+generate.generatePuzzle(generatedPuzzles,initialState)    #GENERATE THE PUZZLES AND STORE THEM
 solutions = []
 
 def copy( mat ):    #MAKES A COPY OF THE INPUTTED STATE MATRIX
@@ -225,6 +228,52 @@ def solve(r, goalState):
         count += 1
     print(count, "Cycles Passed")
     return queue[0]
+
+def findDifference( state1, state2):
+    x1, y1, x2, y2 = 0, 0, 0, 0
+    for index in range(9):
+        row = int(index/3)
+        col = index % 3
+
+        if( state1[row][col] ==  -1 ):
+            x1, y1 = row, col
+        if( state2[row][col] ==  -1 ):
+            x2, y2 = row, col
+            
+    difference = [x1-x2, y1-y2]
+    result = "MOVE " + str( state1[x2][y2] ) + " TO "
+
+    if(difference == [0,1]):
+        result += "RIGHT"
+    elif(difference == [0,-1]):
+        result += "LEFT"
+    elif(difference == [1,0]):
+        result += "DOWN"
+    else:
+        result += "UP"
+
+    return result
+
+
+def displayState( state ):
+    for i in range(3):
+        print("-----------")
+        temp = "|"
+        for j in range(3):
+            temp += str(state[i][j]) + "  "
+        temp += "|"
+        print(temp)
+
+def displayPath( path ):
+
+    for each in path:
+        displayState(each)
+
+
+
+
+
+
 
 
 #SOLVE EACH PUZZLE
