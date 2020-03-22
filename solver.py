@@ -4,8 +4,10 @@ Created on Sat Mar 21 17:25:42 2020
 
 @author: MehmetSanisoglu
 """
+import random
 import numpy as np
 import generate
+import matplotlib.pyplot as plt
 
 t1 = np.array([[1,2,3],[4,5,6],[7,8,-1]])
 t2 = np.array([[1,2,3],[4,5,-1],[7,8,6]])
@@ -239,7 +241,7 @@ def findDifference( state1, state2):
             x1, y1 = row, col
         if( state2[row][col] ==  -1 ):
             x2, y2 = row, col
-            
+
     difference = [x1-x2, y1-y2]
     result = "MOVE " + str( state1[x2][y2] ) + " TO "
 
@@ -260,18 +262,25 @@ def displayState( state ):
         print("-----------")
         temp = "|"
         for j in range(3):
-            temp += str(state[i][j]) + "  "
+            val = state[i][j]
+            if(val == -1):
+                val = "X"
+            temp = temp + str(val) + "  "
         temp += "|"
         print(temp)
 
 def displayPath( path ):
+    size = len(path)
+    index = 0
 
-    for each in path:
-        displayState(each)
-
-
-
-
+    while(index < size - 1):
+        displayState(path[index][1])
+        print("    |||")
+        print("   |||||     " + findDifference(path[index][1], path[index+1][1]))
+        print("    |||")
+        print("     |")
+        index += 1
+    displayState(path[index][1])
 
 
 
@@ -286,3 +295,26 @@ for each in generatedPuzzles:
     solutionSteps = solve( testInput, goalState )
     solutions.append(solutionSteps)
     index += 1
+
+random1 = random.randrange (0,15,1)
+random2 = random.randrange (15,30,1)
+
+print("--------------------------------------------")
+print("TRACE FOR STATE NO ",random1)
+displayPath(solutions[random1])
+print("--------------------------------------------")
+print("TRACE FOR STATE NO ",random2)
+displayPath(solutions[random2])
+
+#PLOT PART
+states = []
+lengths = []
+for i in range(30):
+    states.append(i)
+for each in solutions:
+    lengths.append(len(each))
+
+
+plt.plot(states, lengths, 'ro')
+plt.axis([0, 30, 0, 15])
+plt.show()
