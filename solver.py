@@ -86,42 +86,41 @@ def findPossibilities( path ):  #FINDS ALL THE POSSIBLE STATES THAT CAN BE REACH
     soFar = copyPath( path )        #MAKE A COPY
     terminal = copy(soFar[-1][1])   #THE LAST STATE OF THE PATH
 
-    for i in range(9):  #ITERATE THE BOXES 1 TO 9
-        x = int(i/3)
-        y = i % 3
+    x, y = generate.findWhite(terminal)
 
-        temp = copy(terminal)   #COPY THE TERMINAL TO CALCULATE OTHER POSSIBILITIES
-        tempSoFar = copyPath(soFar) #COPY THE SOFAR TO CALCULATE OTHER POSSIBILITIES
 
-        if( generate.up(temp, x, y) ):    #TRY UP
-            score = calculateMisplaced(temp)    #CALCULATE THE MISPLACEMENT OF NEW STATE
-            new = [score,temp]                  #COMBINE SCORE WITH THE NEW STATE ITSELF
-            tempSoFar.append(new)               #ADD THIS TO THE PATH SOFAR
-            possibilities.append(tempSoFar)     #ADD THIS POSSIBLE PATH TO POSSIBILITIES
-            temp = copy(terminal)               #RESET TEMP
-            tempSoFar = copyPath(soFar)         #RESET SOFAR
+    temp = copy(terminal)   #COPY THE TERMINAL TO CALCULATE OTHER POSSIBILITIES
+    tempSoFar = copyPath(soFar) #COPY THE SOFAR TO CALCULATE OTHER POSSIBILITIES
 
-        if( generate.down(temp, x, y) ):
-            score = calculateMisplaced(temp)
-            new = [score,temp]
-            tempSoFar.append(new)
-            possibilities.append(tempSoFar)
-            temp = copy(terminal)
-            tempSoFar = copyPath(soFar)
+    if( generate.up(temp, x, y) ):    #TRY UP
+        score = calculateMisplaced(temp)    #CALCULATE THE MISPLACEMENT OF NEW STATE
+        new = [score,temp]                  #COMBINE SCORE WITH THE NEW STATE ITSELF
+        tempSoFar.append(new)               #ADD THIS TO THE PATH SOFAR
+        possibilities.append(tempSoFar)     #ADD THIS POSSIBLE PATH TO POSSIBILITIES
+        temp = copy(terminal)               #RESET TEMP
+        tempSoFar = copyPath(soFar)         #RESET SOFAR
 
-        if( generate.right(temp, x, y) ):
-            score = calculateMisplaced(temp)
-            new = [score,temp]
-            tempSoFar.append(new)
-            possibilities.append(tempSoFar)
-            temp = copy(terminal)
-            tempSoFar = copyPath(soFar)
+    if( generate.down(temp, x, y) ):
+        score = calculateMisplaced(temp)
+        new = [score,temp]
+        tempSoFar.append(new)
+        possibilities.append(tempSoFar)
+        temp = copy(terminal)
+        tempSoFar = copyPath(soFar)
 
-        if( generate.left(temp, x, y) ):
-            score = calculateMisplaced(temp)
-            new = [score,temp]
-            tempSoFar.append(new)
-            possibilities.append(tempSoFar)
+    if( generate.right(temp, x, y) ):
+        score = calculateMisplaced(temp)
+        new = [score,temp]
+        tempSoFar.append(new)
+        possibilities.append(tempSoFar)
+        temp = copy(terminal)
+        tempSoFar = copyPath(soFar)
+
+    if( generate.left(temp, x, y) ):
+        score = calculateMisplaced(temp)
+        new = [score,temp]
+        tempSoFar.append(new)
+        possibilities.append(tempSoFar)
 
     return possibilities
 
@@ -224,12 +223,13 @@ def solve(r, goalState):
         queue = orderPaths(longersRemoved)              #ORDER THE QUEUE WITH LOWER COST ONES IN FRONT
 
         count += 1
-    print(count, "Tur sürdü")
+    print(count, "Cycles Passed")
     return queue[0]
 
 
 #SOLVE EACH PUZZLE
 index = 0
+
 for each in generatedPuzzles:
     print("Puzzle No",index)
     testInput = [[calculateMisplaced(each), each]]

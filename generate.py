@@ -8,6 +8,7 @@ import random
 import numpy as np
 
 currentState = np.array([[1,2,3],[4,5,6],[7,8,-1]])
+goalState = np.array([[1,2,3],[4,5,6],[7,8,-1]])
 generatedList = []
 
 def compareStates(state1, state2):
@@ -78,14 +79,22 @@ def left(state, row, col):
 
     return True
 
+def findWhite( state ):
+    x=y=-1
+
+    for i in range(9):
+        if(state[int(i/3)][i%3] == -1 ):
+            x = int(i/3)
+            y = i%3
+    return x, y
+
 def generatePuzzle(generatedList, state):
 
     while(len(generatedList)<30 ):  #CREATE 30 PUZZLES
 
         for i in range(10): #PERFORM 10 VALID OPERATIONS
-            randomIndex = random.randrange(0,9,1)   #CHOSE RANDOM INDEX HAVE AN OPERATION ON
-            row = int(randomIndex / 3)
-            col = randomIndex % 3
+            
+            row, col = findWhite(state)
 
             noProb = False
             while( not noProb ):        #IF IT'S OK TO PERFORM
@@ -111,8 +120,9 @@ def generatePuzzle(generatedList, state):
                 break
 
         if (not alreadyPresent):
-            generatedList.append(state)
-            state = np.array([[1,2,3],[4,5,6],[7,8,-1]])     #NEED TO RESET IT
+            if(not compareStates(state,goalState)):    
+                generatedList.append(state)
+                state = np.array([[1,2,3],[4,5,6],[7,8,-1]])     #NEED TO RESET IT
 
 
     return generatedList
