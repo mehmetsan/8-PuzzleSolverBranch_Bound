@@ -283,11 +283,15 @@ def displayPath( path ):
     displayState(path[index][1])
 
 
-
+#DISPLAY 30 DISTINCT INITIAL STATES
+count = 0
+for each in generatedPuzzles:
+    print("PUZZLE NO",count)
+    displayState(each)
+    count += 1
 
 #SOLVE EACH PUZZLE
 index = 0
-
 for each in generatedPuzzles:
     print()
     print("Puzzle No",index)
@@ -296,10 +300,11 @@ for each in generatedPuzzles:
     solutions.append(solutionSteps)
     index += 1
 
+#CHOOSE TWO RANDOM PUZZLES TO TRACES
 random1 = random.randrange (0,15,1)
 random2 = random.randrange (15,30,1)
 
-print("--------------------------------------------")
+print("------------TRACE--PART------------")
 print("TRACE FOR STATE NO ",random1)
 displayPath(solutions[random1])
 print("--------------------------------------------")
@@ -314,7 +319,8 @@ for i in range(30):
 for each in solutions:
     lengths.append(len(each))
 
-
+print("-----------------------------------")
+print("------------GRAPH--PART------------")
 plt.plot(states, lengths, 'ro')
 plt.axis([0, 30, 0, 15])
 plt.show()
