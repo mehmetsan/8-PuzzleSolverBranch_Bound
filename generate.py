@@ -7,7 +7,6 @@ Created on Sat Mar 21 16:32:03 2020
 import random
 import numpy as np
 
-currentState = np.array([[1,2,3],[4,5,6],[7,8,-1]])
 goalState = np.array([[1,2,3],[4,5,6],[7,8,-1]])
 generatedList = []
 
@@ -92,8 +91,8 @@ def generatePuzzle(generatedList, state):
 
     while(len(generatedList)<30 ):  #CREATE 30 PUZZLES
 
-        for i in range(10): #PERFORM 10 VALID OPERATIONS
-            
+        for i in range(30): #PERFORM 10 VALID OPERATIONS
+
             row, col = findWhite(state)
 
             noProb = False
@@ -120,7 +119,7 @@ def generatePuzzle(generatedList, state):
                 break
 
         if (not alreadyPresent):
-            if(not compareStates(state,goalState)):    
+            if(not compareStates(state,goalState)):
                 generatedList.append(state)
                 state = np.array([[1,2,3],[4,5,6],[7,8,-1]])     #NEED TO RESET IT
 

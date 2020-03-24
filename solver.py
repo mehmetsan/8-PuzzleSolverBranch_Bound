@@ -9,9 +9,6 @@ import numpy as np
 import generate
 import matplotlib.pyplot as plt
 
-t1 = np.array([[1,2,3],[4,5,6],[7,8,-1]])
-t2 = np.array([[1,2,3],[4,5,-1],[7,8,6]])
-
 initialState = np.array([[1,2,3],[4,5,6],[7,8,-1]])
 goalState = np.array([[1,2,3],[4,5,6],[7,8,-1]])
 
@@ -45,7 +42,6 @@ def copyPath( path ):   #MAKE A COPY OF THE INPUTTED PATH
     return copyPath
 
 def calculateMisplaced(state1): #HEURISTIC METHOD, CALCULATES THE NUMBER OF MISPLACEMENTS
-
     goal = np.array([[1,2,3],[4,5,6],[7,8,-1]])
     i=0 #Row
     j=0 #Column
@@ -64,7 +60,6 @@ def calculateMisplaced(state1): #HEURISTIC METHOD, CALCULATES THE NUMBER OF MISP
     return count
 
 def comparePaths(path1, path2): #COMPARE TWO PATHS, RETURN TRUE IF THEY ARE SAME
-
     len1 = len(path1)
     len2 = len(path2)
 
@@ -84,6 +79,19 @@ def checkPath( path ):  #CHECKS WHETHER THE INPUTTED PATH RESULTS IN TARGET STAT
     endState = path[-1][1]
     return generate.compareStates( endState, goalState )
 
+def checkLoop ( path ):    #CHECKS WHETHER THERE IS A LOOP OR NOT IN THE INPUT PATH
+    size = len(path)
+
+    for i in range(size):
+        j= i+1
+        while( j < size):
+            if(generate.compareStates (path[i][1] , path[j][1]) ): #IF WE ENCOUNTER ANY LOOPS
+                    return True
+            else:    #CHECK THE NEXT ONE
+                j += 1
+    return False
+def getCost(path):     #CALCULATE THE COST SCORES ( TO ORDER IN THE QUEUE )
+    return len(path) + path[-1][0]
 
 def findPossibilities( path ):  #FINDS ALL THE POSSIBLE STATES THAT CAN BE REACHED
                                 #FROM THE TERMINAL STATE OF THE INPUTTED PATH
@@ -129,18 +137,6 @@ def findPossibilities( path ):  #FINDS ALL THE POSSIBLE STATES THAT CAN BE REACH
 
     return possibilities
 
-def checkLoop ( path ):    #CHECKS WHETHER THERE IS A LOOP OR NOT IN THE INPUT PATH
-    size = len(path)
-
-    for i in range(size):
-        j= i+1
-        while( j < size):
-            if(generate.compareStates (path[i][1] , path[j][1]) ): #IF WE ENCOUNTER ANY LOOPS
-                    return True
-            else:    #CHECK THE NEXT ONE
-                j += 1
-    return False
-
 def removeLoops( possiblePaths ):   #REMOVES THE PATHS WITH LOOPS
     removedVersion = []
     for each in possiblePaths:
@@ -175,9 +171,6 @@ def removeLongers( possiblePaths ): #REMOVES THE PATHS THAT REACH THE SAME STATE
 
     return removedVersion
 
-def getCost(path):     #CALCULATE THE COST SCORES ( TO ORDER IN THE QUEUE )
-    return len(path) + path[-1][0]
-
 def orderPaths( paths ):    #ORDER THE GIVEN PATHS BASED ON THEIR COST
     ordered = []
 
@@ -188,7 +181,6 @@ def orderPaths( paths ):    #ORDER THE GIVEN PATHS BASED ON THEIR COST
         correctIndex = 0        #NEED TO FIND THE CORRECT INDEX TO PLACE THIS PATH
 
         for i in range(size):   #ITERATE THE ALREADY ORDERED LIST
-
             if( score <= getCost(ordered[i]) ):  #IF WE HAVE A BETTER SCORE THAN THE INDEX AT ORDERED
                 correctIndex = i
                 ordered.insert(correctIndex, each)
@@ -212,14 +204,13 @@ def addToFront( queue, paths):
 
     return
 
-def solve(r, goalState):
+def solve(initialState, goalState):
 
+    r = [[calculateMisplaced(initialState), initialState]]
     path  = copyPath(r)
     queue = [ path ]
 
-    count = 0
     while( not checkPath(queue[0]) and len(queue)!=0 ):
-
         frontPath = queue.pop(0)                        #GET THE PATH IN FRONT OF THE QUEUE (ALSO THE SHORTEST ONE)
         possibilities = findPossibilities(frontPath)    #EXPAND IT TO THE POSSIBLE PATHS
         loopsRemoved = removeLoops(possibilities)       #REMOVE THE LOOPS FROM THEM
@@ -227,8 +218,6 @@ def solve(r, goalState):
         longersRemoved = removeLongers(queue)           #REMOVE UNNECESSAIRLY LONGER ONES FROM THEM
         queue = orderPaths(longersRemoved)              #ORDER THE QUEUE WITH LOWER COST ONES IN FRONT
 
-        count += 1
-    print(count, "Cycles Passed")
     return queue[0]
 
 def findDifference( state1, state2):
@@ -273,6 +262,8 @@ def displayPath( path ):
     size = len(path)
     index = 0
 
+
+    print("\n *INITIAL*")
     while(index < size - 1):
         displayState(path[index][1])
         print("    |||")
@@ -281,6 +272,7 @@ def displayPath( path ):
         print("     |")
         index += 1
     displayState(path[index][1])
+    print("  *GOAL*")
 
 
 #DISPLAY 30 DISTINCT INITIAL STATES
@@ -291,14 +283,9 @@ for each in generatedPuzzles:
     count += 1
 
 #SOLVE EACH PUZZLE
-index = 0
 for each in generatedPuzzles:
-    print()
-    print("Puzzle No",index)
-    testInput = [[calculateMisplaced(each), each]]
-    solutionSteps = solve( testInput, goalState )
+    solutionSteps = solve( each, goalState )
     solutions.append(solutionSteps)
-    index += 1
 
 #CHOOSE TWO RANDOM PUZZLES TO TRACES
 random1 = random.randrange (0,15,1)
@@ -322,5 +309,8 @@ for each in solutions:
 print("-----------------------------------")
 print("------------GRAPH--PART------------")
 plt.plot(states, lengths, 'ro')
+plt.xlabel("Initial State No.")
+plt.ylabel("Solution Path Length")
+plt.title("Puzzles and \nCorresponding Solution Path Lengths")
 plt.axis([0, 30, 0, 15])
 plt.show()
